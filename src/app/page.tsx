@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState, ComponentProps } from 'react'
 import SelectFile from '@/app/select-file'
 import OffsetTable from '@/app/offset-table'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 
 function Home () {
   const [offsets, setOffsets] = useState<Array<{ start: number, end: number }>>()
@@ -19,6 +20,9 @@ function Home () {
 
   return (
     <main className="flex flex-col items-center justify-between p-24">
+      <p>
+        Fix a damaged PDF file. Try using <Link href="/corrupted.pdf">a corrupted PDF sample</Link>.
+      </p>
       {offsets === undefined ? (
         <SelectFile worker={worker} onCompleted={handleCompleted} />
       ) : (
