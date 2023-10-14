@@ -36,7 +36,7 @@ function Home () {
   return (
     <main className="flex flex-col items-center justify-between p-24">
       <p>
-        Fix a damaged PDF file. Try using <Link href="/corrupted.pdf">a corrupted PDF sample</Link>.
+        Fix a damaged PDF file. Try using <Link prefetch={false} target="_blank" href="/corrupted.pdf">a corrupted PDF sample</Link>.
       </p>
       <p>
         The file is not processed on the server. Processing is entirely handled on the client side. Even if you disconnect from the internet, it will continue to function.
