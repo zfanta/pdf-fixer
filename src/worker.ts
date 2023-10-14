@@ -51,10 +51,8 @@ export type WorkerInput = {
   method: 'fixPdf',
   payload: {
     buffer: Uint8Array
-    offset: {
-      start: number,
-      end: number
-    }
+    offset: number,
+    length: number
   }
 } | {
   method: 'init',
@@ -66,8 +64,8 @@ export type WorkerOutput = {
   payload: {
     progress: number,
     offsets: Array<{
-      start: number,
-      ends: number[]
+      offset: number,
+      lengths: number[]
     }> | undefined
   }
 } | {
@@ -87,8 +85,8 @@ async function getOffsets (buffer: Uint8Array) {
   const signature = '%PDF-'
   const signatureEOF = '%%EOF'
   const offsets: Array<{
-    start: number,
-    ends: number[]
+    offset: number,
+    lengths: number[]
   }> = []
 
   let lastOffset = 0
@@ -115,13 +113,13 @@ async function getOffsets (buffer: Uint8Array) {
       const version = parseFloat(buffer.slice(currentOffset + signature.length, currentOffset + signature.length + 3).reduce((acc, number) => `${acc}${String.fromCharCode(number)}`, ''))
       if (!(isNaN(version) || Number.isInteger(version))) {
         offsets.push({
-          start: currentOffset,
-          ends: []
+          offset: currentOffset,
+          lengths: []
         })
       }
     } else if (str === signatureEOF) {
       offsets.forEach(offset => {
-        offset.ends.push(currentOffset + signatureEOF.length)
+        offset.lengths.push(currentOffset + signatureEOF.length)
       })
     }
   }
@@ -135,13 +133,13 @@ async function getOffsets (buffer: Uint8Array) {
   } as WorkerOutput)
 }
 
-async function fixPdf (buffer: Uint8Array, startOffset: number, endOffset: number) {
+async function fixPdf (buffer: Uint8Array, offset: number, length: number) {
   const gs = await init()
 
   const inputPath = '/input.pdf'
   const outputPath = '/output.pdf'
 
-  gs.FS.writeFile('/input.pdf', buffer.slice(startOffset, endOffset))
+  gs.FS.writeFile('/input.pdf', buffer.slice(offset, length))
 
   let pageCount = 0
   const pageCountHandler = (buffer: string) => {
@@ -206,7 +204,7 @@ self.onmessage = async function (e) {
 
   if (data.method === 'fixPdf') {
     const { payload } = data
-    await fixPdf(payload.buffer, payload.offset.start, payload.offset.end)
+    await fixPdf(payload.buffer, payload.offset, payload.length)
     return
   }
 }

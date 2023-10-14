@@ -9,7 +9,7 @@ import { WorkerInput } from '@/worker'
 import { match, P } from 'ts-pattern'
 
 function Home () {
-  const [offsets, setOffsets] = useState<Array<{ start: number, end: number }>>()
+  const [offsets, setOffsets] = useState<Array<{ offset: number, length: number }>>()
   const [buffer, setBuffer] = useState<Uint8Array>(new Uint8Array())
   const worker = useMemo(() => new Worker(new URL('../worker.ts', import.meta.url)), [])
   const [loading, setLoading] = useState(true)

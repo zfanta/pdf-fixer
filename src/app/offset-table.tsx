@@ -22,7 +22,7 @@ function convertSizeToHumanReadable (size: number) {
 interface OffsetTableProps {
   worker: Worker
   buffer: Uint8Array
-  offsets: Array<{ start: number, end: number }>
+  offsets: Array<{ offset: number, length: number }>
 }
 
 export default function OffsetTable ({ offsets, buffer, worker }: OffsetTableProps) {
@@ -47,10 +47,11 @@ export default function OffsetTable ({ offsets, buffer, worker }: OffsetTablePro
       <tbody>
       {offsets.map((offset) => (
         <OffsetRow
-          key={`${offset.start}-${offset.end}`}
+          key={`${offset.offset}-${offset.length}`}
           worker={worker}
           buffer={buffer}
-          offset={offset}
+          offset={offset.offset}
+          length={offset.length}
           disabled={inProgress}
           onStart={handleStart}
           onEnd={handleEnd}
@@ -64,13 +65,14 @@ export default function OffsetTable ({ offsets, buffer, worker }: OffsetTablePro
 interface OffsetRowProps {
   worker: Worker
   buffer: Uint8Array
-  offset: { start: number, end: number }
+  offset: number
+  length: number
   disabled: boolean
   onStart: () => void
   onEnd: () => void
 }
 
-function OffsetRow ({ offset: { start, end }, buffer, worker, disabled, onEnd, onStart }: OffsetRowProps) {
+function OffsetRow ({ offset, length, buffer, worker, disabled, onEnd, onStart }: OffsetRowProps) {
   const [currentPage, setCurrentPage] = useState<number | undefined>(undefined)
   const [numberOfPages, setNumberOfPages] = useState<number | undefined>(undefined)
   const [pdfLink, setPdfLink] = useState<string | undefined>(undefined)
@@ -98,18 +100,16 @@ function OffsetRow ({ offset: { start, end }, buffer, worker, disabled, onEnd, o
       method: 'fixPdf',
       payload: {
         buffer,
-        offset: {
-          start,
-          end
-        }
+        offset,
+        length
       }
     } as WorkerInput)
-  }, [buffer, end, onEnd, onStart, start, worker])
+  }, [buffer, length, offset, onEnd, onStart, worker])
 
   return (
     <tr>
-      <td className={cellStyle}>{convertNumberToHexString(start)}</td>
-      <td className={cellStyle}>{convertSizeToHumanReadable(end - start)}</td>
+      <td className={cellStyle}>{convertNumberToHexString(offset)}</td>
+      <td className={cellStyle}>{convertSizeToHumanReadable(length)}</td>
       <td className={cellStyle}>
         {numberOfPages === undefined && (
           <button onClick={handleClickFix} disabled={disabled}>

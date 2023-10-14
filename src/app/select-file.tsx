@@ -3,7 +3,7 @@ import { WorkerInput, WorkerOutput } from '@/worker'
 
 interface SelectFileProps {
   worker: Worker
-  onCompleted: (buffer: Uint8Array, offsets: Array<{ start: number, end: number }>) => void
+  onCompleted: (buffer: Uint8Array, offsets: Array<{ offset: number, length: number }>) => void
 }
 
 export default function SelectFile ({ worker, onCompleted }: SelectFileProps) {
@@ -33,12 +33,12 @@ export default function SelectFile ({ worker, onCompleted }: SelectFileProps) {
       const { offsets, progress } = payload
       if (offsets !== undefined) {
         const flat = offsets.reduce((acc, cur) => {
-          const offsetsFlat = cur.ends.map((end) => ({
-            start: cur.start,
-            end
+          const offsetsFlat = cur.lengths.map((length) => ({
+            offset: cur.offset,
+            length
           }))
           return [...acc, ...offsetsFlat]
-        }, [] as { start: number, end: number }[])
+        }, [] as { offset: number, length: number }[])
 
         onCompleted(buffer, flat)
       }
