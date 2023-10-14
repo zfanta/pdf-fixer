@@ -56,6 +56,9 @@ export type WorkerInput = {
       end: number
     }
   }
+} | {
+  method: 'init',
+  payload: never
 }
 
 export type WorkerOutput = {
@@ -74,6 +77,9 @@ export type WorkerOutput = {
     currentPage: number | undefined,
     buffer: Uint8Array | undefined
   }
+} | {
+  method: 'init',
+  payload: never
 }
 
 async function getOffsets (buffer: Uint8Array) {
@@ -184,6 +190,14 @@ async function fixPdf (buffer: Uint8Array, startOffset: number, endOffset: numbe
 
 self.onmessage = async function (e) {
   const data = e.data as WorkerInput
+
+  if (data.method === 'init') {
+    await init()
+    postMessage({
+      method: 'init',
+    } as WorkerOutput)
+    return
+  }
 
   if (data.method === 'getOffsets') {
     await getOffsets(data.payload.buffer)
