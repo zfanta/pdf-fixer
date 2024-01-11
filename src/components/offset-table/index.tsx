@@ -25,7 +25,8 @@ export default function OffsetTable ({ offsets, buffer, worker }: OffsetTablePro
       <tr>
         <th className={cellStyle}>Start</th>
         <th className={cellStyle}>Length</th>
-        <th className={cellStyle}>Action</th>
+        <th className={cellStyle}>Fix</th>
+        <th className={cellStyle}>Download</th>
       </tr>
       </thead>
       <tbody>
