@@ -65,7 +65,7 @@ export default function OffsetRow ({ offset, length, buffer, worker, disabled, o
   }, [buffer, length, offset, onEnd, onStart, worker])
 
   const loadRawPdf = useCallback(() => {
-    const blob = new Blob([buffer.subarray(offset, length)], { type: 'application/pdf' })
+    const blob = new Blob([buffer.subarray(offset, offset + length)], { type: 'application/pdf' })
     setRawPdfLink(URL.createObjectURL(blob))
   }, [buffer, length, offset])
 

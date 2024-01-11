@@ -119,7 +119,7 @@ async function getOffsets (buffer: Uint8Array) {
       }
     } else if (str === signatureEOF) {
       offsets.forEach(offset => {
-        offset.lengths.push(currentOffset + signatureEOF.length)
+        offset.lengths.push(currentOffset + signatureEOF.length - offset.offset)
       })
     }
   }
@@ -139,7 +139,7 @@ async function fixPdf (buffer: Uint8Array, offset: number, length: number) {
   const inputPath = '/input.pdf'
   const outputPath = '/output.pdf'
 
-  gs.FS.writeFile('/input.pdf', buffer.slice(offset, length))
+  gs.FS.writeFile('/input.pdf', buffer.subarray(offset, offset + length))
 
   let pageCount = 0
   const pageCountHandler = (buffer: string) => {
