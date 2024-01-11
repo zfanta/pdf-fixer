@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useMemo, useState, ComponentProps, useEffect } from 'react'
-import SelectFile from '@/app/select-file'
-import OffsetTable from '@/app/offset-table'
+import SelectFile from '@/components/select-file'
+import OffsetTable from '@/components/offset-table'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { WorkerInput } from '@/worker'
